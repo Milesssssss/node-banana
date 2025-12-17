@@ -11,6 +11,13 @@ const GEMINI_MODEL_MAP: Record<ModelType, string> = {
   "nano-banana-pro": "gemini-3-pro-image-preview",
 };
 
+// Map model types to AIHubMix Gemini model IDs
+// Ref: https://docs.aihubmix.com/cn/api/Gemini-Guides
+const AIHUBMIX_GEMINI_MODEL_MAP: Record<ModelType, string> = {
+  "nano-banana": "gemini-2.5-flash-image-preview",
+  "nano-banana-pro": "gemini-3-pro-image-preview",
+};
+
 // Map model types to OpenRouter model IDs
 const OPENROUTER_MODEL_MAP: Record<ModelType, string> = {
   "nano-banana": "google/gemini-2.5-flash-image",
@@ -48,11 +55,17 @@ export async function POST(request: NextRequest) {
 
   try {
     const geminiApiKey = process.env.GEMINI_API_KEY;
+    const aihubmixApiKey = process.env.AI_HUB_MIX_API_KEY;
     const openRouterApiKey = process.env.OPEN_ROUTER_API_KEY;
 
-    const provider = geminiApiKey
-      ? "gemini"
-      : (openRouterApiKey ? "openrouter" : null);
+    let provider: "gemini" | "aihubmix" | "openrouter" | null = null;
+    if (geminiApiKey) {
+      provider = "gemini";
+    } else if (aihubmixApiKey) {
+      provider = "aihubmix";
+    } else if (openRouterApiKey) {
+      provider = "openrouter";
+    }
     console.log(`[API:${requestId}] Provider selection: ${provider || "none"}`);
 
     if (!provider) {
@@ -61,7 +74,7 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error:
-            "API key not configured. Add GEMINI_API_KEY or OPEN_ROUTER_API_KEY to .env.local",
+            "API key not configured. Add GEMINI_API_KEY, AI_HUB_MIX_API_KEY or OPEN_ROUTER_API_KEY to .env.local",
         },
         { status: 500 }
       );
@@ -79,9 +92,11 @@ export async function POST(request: NextRequest) {
     } = body;
 
     console.log(`[API:${requestId}] Request parameters:`);
-    const modelIdForLog = provider === "gemini"
-      ? GEMINI_MODEL_MAP[model]
-      : OPENROUTER_MODEL_MAP[model];
+    const modelIdForLog = provider === "openrouter"
+      ? OPENROUTER_MODEL_MAP[model]
+      : (provider === "aihubmix"
+        ? AIHUBMIX_GEMINI_MODEL_MAP[model]
+        : GEMINI_MODEL_MAP[model]);
     console.log(`[API:${requestId}]   - Model: ${model} -> ${modelIdForLog}`);
     console.log(`[API:${requestId}]   - Images count: ${images?.length || 0}`);
     console.log(`[API:${requestId}]   - Prompt length: ${prompt?.length || 0} chars`);
@@ -149,10 +164,38 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    if (provider === "gemini") {
+    if (provider === "gemini" || provider === "aihubmix") {
       // Initialize Gemini client
       console.log(`[API:${requestId}] Initializing Gemini client...`);
-      const ai = new GoogleGenAI({ apiKey: geminiApiKey as string });
+      const apiKeyToUse = provider === "gemini"
+        ? (geminiApiKey as string)
+        : (aihubmixApiKey as string);
+      const aihubmixGeminiBaseUrlRaw =
+        process.env.AI_HUB_MIX_GEMINI_BASE_URL || "https://aihubmix.com/gemini";
+
+      const aiInitOptions: any = {
+        apiKey: apiKeyToUse,
+      };
+
+      if (provider === "aihubmix") {
+        let aihubmixGeminiBaseUrl = aihubmixGeminiBaseUrlRaw.trim().replace(/\/+$/, "");
+        if (aihubmixGeminiBaseUrl.endsWith("/v1") || aihubmixGeminiBaseUrl.includes("/v1/")) {
+          console.warn(
+            `[API:${requestId}] AI_HUB_MIX_GEMINI_BASE_URL looks like an OpenAI-compatible base_url (${aihubmixGeminiBaseUrl}). ` +
+            `For genai native calls, AIHubMix recommends https://aihubmix.com/gemini. Falling back to /gemini.`
+          );
+          aihubmixGeminiBaseUrl = "https://aihubmix.com/gemini";
+        }
+
+        aiInitOptions.httpOptions = {
+          baseUrl: aihubmixGeminiBaseUrl,
+        };
+        console.log(
+          `[API:${requestId}] Using AIHubMix Gemini baseUrl: ${aiInitOptions.httpOptions.baseUrl}`
+        );
+      }
+
+      const ai = new GoogleGenAI(aiInitOptions);
 
       // Build request parts array with prompt and all images
       console.log(`[API:${requestId}] Building request parts...`);
@@ -211,7 +254,9 @@ export async function POST(request: NextRequest) {
       const geminiStartTime = Date.now();
 
       const response = await ai.models.generateContent({
-        model: GEMINI_MODEL_MAP[model],
+        model: provider === "aihubmix"
+          ? AIHUBMIX_GEMINI_MODEL_MAP[model]
+          : GEMINI_MODEL_MAP[model],
         contents: [
           {
             role: "user",
