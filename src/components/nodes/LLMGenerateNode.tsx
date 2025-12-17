@@ -99,7 +99,7 @@ export function LLMGenerateNode({ id, data, selected }: NodeProps<LLMGenerateNod
 
       <div className="flex-1 flex flex-col min-h-0 gap-2">
         {/* Output preview area */}
-        <div className="relative w-full flex-1 min-h-[80px] border border-dashed border-neutral-600 rounded p-2 overflow-auto">
+        <div className="relative w-full flex-1 min-h-[80px] border border-dashed border-neutral-600 p-2 overflow-auto">
           {nodeData.status === "loading" ? (
             <div className="h-full flex items-center justify-center">
               <svg
@@ -135,7 +135,7 @@ export function LLMGenerateNode({ id, data, selected }: NodeProps<LLMGenerateNod
                 <button
                   onClick={handleRegenerate}
                   disabled={isRunning}
-                  className="w-5 h-5 bg-neutral-900/80 hover:bg-blue-600/80 disabled:opacity-50 disabled:cursor-not-allowed rounded flex items-center justify-center text-neutral-400 hover:text-white transition-colors"
+                  className="w-5 h-5 bg-neutral-900/80 hover:bg-blue-600/80 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-neutral-400 hover:text-white transition-colors"
                   title="Regenerate"
                 >
                   <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -144,7 +144,7 @@ export function LLMGenerateNode({ id, data, selected }: NodeProps<LLMGenerateNod
                 </button>
                 <button
                   onClick={handleClearOutput}
-                  className="w-5 h-5 bg-neutral-900/80 hover:bg-red-600/80 rounded flex items-center justify-center text-neutral-400 hover:text-white transition-colors"
+                  className="w-5 h-5 bg-neutral-900/80 hover:bg-red-600/80 flex items-center justify-center text-neutral-400 hover:text-white transition-colors"
                   title="Clear output"
                 >
                   <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -166,7 +166,7 @@ export function LLMGenerateNode({ id, data, selected }: NodeProps<LLMGenerateNod
         <select
           value={nodeData.provider}
           onChange={handleProviderChange}
-          className="w-full text-[10px] py-1 px-1.5 border border-neutral-700 rounded bg-neutral-900/50 focus:outline-none focus:ring-1 focus:ring-neutral-600 text-neutral-300 shrink-0"
+          className="w-full text-[10px] py-1 px-1.5 border border-neutral-700 bg-neutral-900/50 focus:outline-none focus:ring-1 focus:ring-neutral-600 text-neutral-300 shrink-0"
         >
           {PROVIDERS.map((p) => (
             <option key={p.value} value={p.value}>
@@ -179,7 +179,7 @@ export function LLMGenerateNode({ id, data, selected }: NodeProps<LLMGenerateNod
         <select
           value={nodeData.model}
           onChange={handleModelChange}
-          className="w-full text-[10px] py-1 px-1.5 border border-neutral-700 rounded bg-neutral-900/50 focus:outline-none focus:ring-1 focus:ring-neutral-600 text-neutral-300 shrink-0"
+          className="w-full text-[10px] py-1 px-1.5 border border-neutral-700 bg-neutral-900/50 focus:outline-none focus:ring-1 focus:ring-neutral-600 text-neutral-300 shrink-0"
         >
           {availableModels.map((m) => (
             <option key={m.value} value={m.value}>
@@ -199,13 +199,13 @@ export function LLMGenerateNode({ id, data, selected }: NodeProps<LLMGenerateNod
               step="0.1"
               value={nodeData.temperature}
               onChange={handleTemperatureChange}
-              className="w-full h-1 bg-neutral-700 rounded-lg appearance-none cursor-pointer accent-neutral-400"
+              className="w-full h-1 bg-neutral-700 appearance-none cursor-pointer accent-neutral-400"
             />
           </div>
           <select
             value={nodeData.maxTokens}
             onChange={handleMaxTokensChange}
-            className="w-16 text-[10px] py-1 px-1 border border-neutral-700 rounded bg-neutral-900/50 focus:outline-none focus:ring-1 focus:ring-neutral-600 text-neutral-300"
+            className="w-16 text-[10px] py-1 px-1 border border-neutral-700 bg-neutral-900/50 focus:outline-none focus:ring-1 focus:ring-neutral-600 text-neutral-300"
             title="Max tokens"
           >
             <option value={256}>256</option>

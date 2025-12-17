@@ -215,7 +215,7 @@ export function ConnectionDropMenu({
     <div
       ref={menuRef}
       tabIndex={-1}
-      className="fixed z-100 bg-neutral-800 border border-neutral-600 rounded-lg shadow-xl overflow-hidden min-w-[160px] outline-none"
+      className="fixed z-100 bg-neutral-800 border border-neutral-600 shadow-xl overflow-hidden min-w-[160px] outline-none"
       style={{
         left: position.x,
         top: position.y,
@@ -246,10 +246,10 @@ export function ConnectionDropMenu({
       </div>
       <div className="px-2 py-1.5 border-t border-neutral-700 flex items-center justify-between">
         <span className="text-[9px] text-neutral-500">
-          <kbd className="px-1 py-0.5 bg-neutral-700 rounded text-[8px]">↑↓</kbd> navigate
+          <kbd className="px-1 py-0.5 bg-neutral-700 text-[8px]">↑↓</kbd> navigate
         </span>
         <span className="text-[9px] text-neutral-500">
-          <kbd className="px-1 py-0.5 bg-neutral-700 rounded text-[8px]">↵</kbd> select
+          <kbd className="px-1 py-0.5 bg-neutral-700 text-[8px]">↵</kbd> select
         </span>
       </div>
     </div>

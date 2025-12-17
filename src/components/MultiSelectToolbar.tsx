@@ -142,7 +142,7 @@ export function MultiSelectToolbar() {
 
   return (
     <div
-      className="fixed z-[100] flex items-center gap-1 bg-neutral-800 border border-neutral-600 rounded-lg shadow-xl p-1"
+      className="fixed z-[100] flex items-center gap-1 bg-neutral-800 border border-neutral-600 shadow-xl p-1"
       style={{
         left: toolbarPosition.x,
         top: toolbarPosition.y,
@@ -151,7 +151,7 @@ export function MultiSelectToolbar() {
     >
       <button
         onClick={handleStackHorizontally}
-        className="p-1.5 rounded hover:bg-neutral-700 text-neutral-400 hover:text-neutral-100 transition-colors"
+        className="p-1.5 hover:bg-neutral-700 text-neutral-400 hover:text-neutral-100 transition-colors"
         title="Stack horizontally (H)"
       >
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -160,7 +160,7 @@ export function MultiSelectToolbar() {
       </button>
       <button
         onClick={handleStackVertically}
-        className="p-1.5 rounded hover:bg-neutral-700 text-neutral-400 hover:text-neutral-100 transition-colors"
+        className="p-1.5 hover:bg-neutral-700 text-neutral-400 hover:text-neutral-100 transition-colors"
         title="Stack vertically (V)"
       >
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -169,7 +169,7 @@ export function MultiSelectToolbar() {
       </button>
       <button
         onClick={handleArrangeAsGrid}
-        className="p-1.5 rounded hover:bg-neutral-700 text-neutral-400 hover:text-neutral-100 transition-colors"
+        className="p-1.5 hover:bg-neutral-700 text-neutral-400 hover:text-neutral-100 transition-colors"
         title="Arrange as grid (G)"
       >
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>

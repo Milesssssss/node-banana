@@ -417,7 +417,7 @@ export function AnnotationModal() {
             <button
               key={tool.type}
               onClick={() => setCurrentTool(tool.type)}
-              className={`px-3.5 py-1.5 text-xs font-medium rounded transition-colors ${
+              className={`px-3.5 py-1.5 text-xs font-medium transition-colors ${
                 currentTool === tool.type
                   ? "bg-white text-neutral-900"
                   : "text-neutral-400 hover:text-white"
@@ -441,7 +441,7 @@ export function AnnotationModal() {
           <button onClick={closeModal} className="px-4 py-1.5 text-xs font-medium text-neutral-400 hover:text-white">
             Cancel
           </button>
-          <button onClick={handleDone} className="px-4 py-1.5 text-xs font-medium bg-white text-neutral-900 rounded hover:bg-neutral-200">
+          <button onClick={handleDone} className="px-4 py-1.5 text-xs font-medium bg-white text-neutral-900 hover:bg-neutral-200">
             Done
           </button>
         </div>
@@ -500,7 +500,7 @@ export function AnnotationModal() {
             <button
               key={width}
               onClick={() => setToolOptions({ strokeWidth: width })}
-              className={`w-8 h-8 rounded flex items-center justify-center transition-colors ${
+              className={`w-8 h-8 flex items-center justify-center transition-colors ${
                 toolOptions.strokeWidth === width ? "bg-neutral-700" : "hover:bg-neutral-800"
               }`}
             >
@@ -514,7 +514,7 @@ export function AnnotationModal() {
         {/* Fill Toggle */}
         <button
           onClick={() => setToolOptions({ fillColor: toolOptions.fillColor ? null : toolOptions.strokeColor })}
-          className={`px-3 py-1.5 text-[10px] uppercase tracking-wide rounded transition-colors ${
+          className={`px-3 py-1.5 text-[10px] uppercase tracking-wide transition-colors ${
             toolOptions.fillColor ? "bg-neutral-700 text-white" : "text-neutral-500 hover:text-white"
           }`}
         >
@@ -523,9 +523,9 @@ export function AnnotationModal() {
 
         {/* Zoom */}
         <div className="flex items-center gap-2 ml-auto">
-          <button onClick={() => setScale(Math.max(scale - 0.1, 0.1))} className="w-7 h-7 rounded text-neutral-400 hover:text-white text-sm">-</button>
+          <button onClick={() => setScale(Math.max(scale - 0.1, 0.1))} className="w-7 h-7 text-neutral-400 hover:text-white text-sm">-</button>
           <span className="text-[10px] text-neutral-400 w-10 text-center">{Math.round(scale * 100)}%</span>
-          <button onClick={() => setScale(Math.min(scale + 0.1, 5))} className="w-7 h-7 rounded text-neutral-400 hover:text-white text-sm">+</button>
+          <button onClick={() => setScale(Math.min(scale + 0.1, 5))} className="w-7 h-7 text-neutral-400 hover:text-white text-sm">+</button>
         </div>
       </div>
 

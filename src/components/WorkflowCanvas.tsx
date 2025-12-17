@@ -803,7 +803,7 @@ function WorkflowCanvasInner() {
       {/* Drop overlay indicator */}
       {isDragOver && (
         <div className="absolute inset-0 bg-blue-500/10 z-50 pointer-events-none flex items-center justify-center">
-          <div className="bg-neutral-800 border border-neutral-600 rounded-lg px-6 py-4 shadow-xl">
+          <div className="bg-neutral-800 border border-neutral-600 px-6 py-4 shadow-xl">
             <p className="text-neutral-200 text-sm font-medium">
               {dropType === "workflow"
                 ? "Drop to load workflow"
@@ -818,7 +818,7 @@ function WorkflowCanvasInner() {
       {/* Splitting indicator */}
       {isSplitting && (
         <div className="absolute inset-0 bg-black/50 z-50 flex items-center justify-center">
-          <div className="bg-neutral-800 border border-neutral-600 rounded-lg px-6 py-4 shadow-xl flex items-center gap-3">
+          <div className="bg-neutral-800 border border-neutral-600 px-6 py-4 shadow-xl flex items-center gap-3">
             <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
             <p className="text-neutral-200 text-sm font-medium">Splitting image grid...</p>
           </div>
@@ -849,9 +849,9 @@ function WorkflowCanvasInner() {
         }}
       >
         <Background color="#404040" gap={20} size={1} />
-        <Controls className="bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg [&>button]:bg-neutral-800 [&>button]:border-neutral-700 [&>button]:fill-neutral-300 [&>button:hover]:bg-neutral-700 [&>button:hover]:fill-neutral-100" />
+        <Controls className="bg-neutral-800 border border-neutral-700 shadow-lg [&>button]:bg-neutral-800 [&>button]:border-neutral-700 [&>button]:fill-neutral-300 [&>button:hover]:bg-neutral-700 [&>button:hover]:fill-neutral-100" />
         <MiniMap
-          className="bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg"
+          className="bg-neutral-800 border border-neutral-700 shadow-lg"
           maskColor="rgba(0, 0, 0, 0.6)"
           nodeColor={(node) => {
             switch (node.type) {

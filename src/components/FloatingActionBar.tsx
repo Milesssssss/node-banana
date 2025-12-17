@@ -36,7 +36,7 @@ function NodeButton({ type, label }: NodeButtonProps) {
       onClick={handleClick}
       draggable
       onDragStart={handleDragStart}
-      className="px-2.5 py-1.5 text-[11px] font-medium text-neutral-400 hover:text-neutral-100 hover:bg-neutral-700 rounded transition-colors cursor-grab active:cursor-grabbing"
+      className="px-2.5 py-1.5 text-[11px] font-medium text-neutral-400 hover:text-neutral-100 hover:bg-neutral-700 transition-colors cursor-grab active:cursor-grabbing"
     >
       {label}
     </button>
@@ -88,7 +88,7 @@ function GenerateComboButton() {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="px-2.5 py-1.5 text-[11px] font-medium text-neutral-400 hover:text-neutral-100 hover:bg-neutral-700 rounded transition-colors flex items-center gap-1"
+        className="px-2.5 py-1.5 text-[11px] font-medium text-neutral-400 hover:text-neutral-100 hover:bg-neutral-700 transition-colors flex items-center gap-1"
       >
         Generate
         <svg
@@ -103,7 +103,7 @@ function GenerateComboButton() {
       </button>
 
       {isOpen && (
-        <div className="absolute bottom-full left-0 mb-2 bg-neutral-800 border border-neutral-700 rounded-lg shadow-xl overflow-hidden min-w-[140px]">
+        <div className="absolute bottom-full left-0 mb-2 bg-neutral-800 border border-neutral-700 shadow-xl overflow-hidden min-w-[140px]">
           <button
             onClick={() => handleAddNode("nanoBanana")}
             draggable
@@ -230,7 +230,7 @@ export function FloatingActionBar() {
         onChange={handleFileChange}
         className="hidden"
       />
-      <div className="flex items-center gap-0.5 bg-neutral-800/95 backdrop-blur-sm rounded-lg shadow-lg border border-neutral-700/80 px-1.5 py-1">
+      <div className="flex items-center gap-0.5 bg-neutral-800/95 backdrop-blur-sm shadow-lg border border-neutral-700/80 px-1.5 py-1">
         <NodeButton type="imageInput" label="Image" />
         <NodeButton type="annotation" label="Annotate" />
         <NodeButton type="prompt" label="Prompt" />
@@ -242,7 +242,7 @@ export function FloatingActionBar() {
         <button
           onClick={handleSave}
           title="Save workflow"
-          className="p-1.5 text-neutral-400 hover:text-neutral-100 hover:bg-neutral-700 rounded transition-colors"
+          className="p-1.5 text-neutral-400 hover:text-neutral-100 hover:bg-neutral-700 xtransition-colors"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -252,7 +252,7 @@ export function FloatingActionBar() {
         <button
           onClick={handleLoadClick}
           title="Load workflow"
-          className="p-1.5 text-neutral-400 hover:text-neutral-100 hover:bg-neutral-700 rounded transition-colors"
+          className="p-1.5 text-neutral-400 hover:text-neutral-100 hover:bg-neutral-700 transition-colors"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -264,7 +264,7 @@ export function FloatingActionBar() {
         <button
           onClick={toggleEdgeStyle}
           title={`Switch to ${edgeStyle === "angular" ? "curved" : "angular"} connectors`}
-          className="p-1.5 text-neutral-400 hover:text-neutral-100 hover:bg-neutral-700 rounded transition-colors"
+          className="p-1.5 text-neutral-400 hover:text-neutral-100 hover:bg-neutral-700 transition-colors"
         >
           {edgeStyle === "angular" ? (
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -286,10 +286,10 @@ export function FloatingActionBar() {
             title={!valid ? errors.join("\n") : isRunning ? "Stop" : "Run"}
             className={`flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium transition-colors ${
               isRunning
-                ? "bg-white text-neutral-900 hover:bg-neutral-200 rounded"
+                ? "bg-white text-neutral-900 hover:bg-neutral-200"
                 : valid
-                ? "bg-white text-neutral-900 hover:bg-neutral-200 rounded-l"
-                : "bg-neutral-700 text-neutral-500 cursor-not-allowed rounded"
+                ? "bg-white text-neutral-900 hover:bg-neutral-200"
+                : "bg-neutral-700 text-neutral-500 cursor-not-allowed"
             }`}
           >
             {isRunning ? (
@@ -333,7 +333,7 @@ export function FloatingActionBar() {
           {!isRunning && valid && (
             <button
               onClick={() => setRunMenuOpen(!runMenuOpen)}
-              className="flex items-center self-stretch px-1.5 rounded-r bg-white text-neutral-900 hover:bg-neutral-200 border-l border-neutral-200 transition-colors"
+              className="flex items-center self-stretch px-1.5 bg-white text-neutral-900 hover:bg-neutral-200 border-l border-neutral-200 transition-colors"
               title="Run options"
             >
               <svg
@@ -350,7 +350,7 @@ export function FloatingActionBar() {
 
           {/* Dropdown menu */}
           {runMenuOpen && !isRunning && (
-            <div className="absolute bottom-full right-0 mb-2 bg-neutral-800 border border-neutral-700 rounded-lg shadow-xl overflow-hidden min-w-[180px]">
+            <div className="absolute bottom-full right-0 mb-2 bg-neutral-800 border border-neutral-700 shadow-xl overflow-hidden min-w-[180px]">
               <button
                 onClick={() => {
                   executeWorkflow();

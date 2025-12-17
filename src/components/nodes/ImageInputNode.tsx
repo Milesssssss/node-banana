@@ -92,11 +92,11 @@ export function ImageInputNode({ id, data, selected }: NodeProps<ImageInputNodeT
           <img
             src={nodeData.image}
             alt={nodeData.filename || "Uploaded image"}
-            className="w-full flex-1 min-h-0 object-contain rounded"
+            className="w-full flex-1 min-h-0 object-contain"
           />
           <button
             onClick={handleRemove}
-            className="absolute top-1 right-1 w-5 h-5 bg-black/60 text-white rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+            className="absolute top-1 right-1 w-5 h-5 bg-black/60 text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
           >
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -118,7 +118,7 @@ export function ImageInputNode({ id, data, selected }: NodeProps<ImageInputNodeT
           onClick={() => fileInputRef.current?.click()}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
-          className="w-full flex-1 min-h-[112px] border border-dashed border-neutral-600 rounded flex flex-col items-center justify-center cursor-pointer hover:border-neutral-500 hover:bg-neutral-700/50 transition-colors"
+          className="w-full flex-1 min-h-[112px] border border-dashed border-neutral-600 flex flex-col items-center justify-center cursor-pointer hover:border-neutral-500 hover:bg-neutral-700/50 transition-colors"
         >
           <svg className="w-5 h-5 text-neutral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />

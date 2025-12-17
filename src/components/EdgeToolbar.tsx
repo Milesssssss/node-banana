@@ -55,7 +55,7 @@ export function EdgeToolbar() {
 
   return (
     <div
-      className="fixed z-[100] flex items-center gap-1 bg-neutral-800 border border-neutral-600 rounded-lg shadow-xl p-1"
+      className="fixed z-[100] flex items-center gap-1 bg-neutral-800 border border-neutral-600 shadow-xl p-1"
       style={{
         left: toolbarPosition.x,
         top: toolbarPosition.y,
@@ -64,7 +64,7 @@ export function EdgeToolbar() {
     >
       <button
         onClick={handleTogglePause}
-        className={`p-1.5 rounded hover:bg-neutral-700 transition-colors ${
+        className={`p-1.5 hover:bg-neutral-700 transition-colors ${
           hasPause
             ? "text-amber-400 hover:text-amber-300"
             : "text-neutral-400 hover:text-neutral-100"
@@ -85,7 +85,7 @@ export function EdgeToolbar() {
       </button>
       <button
         onClick={handleDelete}
-        className="p-1.5 rounded hover:bg-neutral-700 text-neutral-400 hover:text-red-400 transition-colors"
+        className="p-1.5 hover:bg-neutral-700 text-neutral-400 hover:text-red-400 transition-colors"
         title="Delete"
       >
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>

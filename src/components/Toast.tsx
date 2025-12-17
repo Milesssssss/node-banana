@@ -64,13 +64,13 @@ export function Toast() {
   return (
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] animate-in fade-in slide-in-from-bottom-4 duration-300">
       <div
-        className={`flex items-center gap-3 px-4 py-3 rounded-lg border shadow-xl ${typeStyles[type]}`}
+        className={`flex items-center gap-3 px-4 py-3 border shadow-xl ${typeStyles[type]}`}
       >
         {typeIcons[type]}
         <span className="text-sm font-medium">{message}</span>
         <button
           onClick={hide}
-          className="ml-2 p-1 rounded hover:bg-white/10 transition-colors"
+          className="ml-2 p-1 hover:bg-white/10 transition-colors"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />

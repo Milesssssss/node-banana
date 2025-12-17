@@ -71,7 +71,7 @@ export function BaseNode({
       />
       <div
         className={`
-          bg-neutral-800 rounded-md shadow-lg border h-full w-full
+          bg-neutral-800 shadow-lg border h-full w-full
           ${isCurrentlyExecuting || isExecuting ? "border-blue-500 ring-1 ring-blue-500/20" : "border-neutral-700"}
           ${hasError ? "border-red-500" : ""}
           ${selected ? "border-neutral-400 ring-1 ring-neutral-400/30" : ""}

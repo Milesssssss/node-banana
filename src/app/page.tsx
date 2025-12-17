@@ -10,7 +10,6 @@ export default function Home() {
   return (
     <ReactFlowProvider>
       <div className="h-screen flex flex-col">
-        <Header />
         <WorkflowCanvas />
         <FloatingActionBar />
         <AnnotationModal />
