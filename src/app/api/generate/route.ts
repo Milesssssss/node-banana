@@ -31,6 +31,16 @@ function safeJsonParse(text: string): unknown {
   }
 }
 
+function estimateBase64Bytes(base64: string): number {
+  if (!base64) return 0;
+  const trimmed = base64.trim();
+  const padding =
+    trimmed.endsWith("==") ? 2
+      : trimmed.endsWith("=") ? 1
+        : 0;
+  return Math.max(0, Math.floor((trimmed.length * 3) / 4 - padding));
+}
+
 export async function POST(request: NextRequest) {
   const requestId = Math.random().toString(36).substring(7);
   console.log(`\n[API:${requestId}] ========== NEW GENERATE REQUEST ==========`);
@@ -104,6 +114,40 @@ export async function POST(request: NextRequest) {
       console.log(`[API:${requestId}]   Image ${idx + 1}: No base64 header, assuming PNG, ${(image.length / 1024).toFixed(2)}KB`);
       return { data: image, mimeType: "image/png" };
     });
+
+    if (provider === "openrouter") {
+      const perImageBytes = imageData.map(({ data }, idx) => ({
+        index: idx + 1,
+        bytes: estimateBase64Bytes(data),
+      }));
+      const totalBytes = perImageBytes.reduce((sum, item) => sum + item.bytes, 0);
+      const totalMB = (totalBytes / (1024 * 1024)).toFixed(2);
+      console.log(`[API:${requestId}] OpenRouter input images approx total: ${totalMB}MB`);
+
+      const maxPerImageBytes = 6 * 1024 * 1024;
+      const maxTotalBytes = 12 * 1024 * 1024;
+      const exceeded = perImageBytes.find((item) => item.bytes > maxPerImageBytes);
+
+      if (exceeded || totalBytes > maxTotalBytes) {
+        const error =
+          `输入图片过大（约 ${totalMB}MB）。` +
+          `OpenRouter 很容易出现 503/超时；` +
+          `建议先压缩/缩放后再试（最长边 <= 2048，单张 <= 6MB）。`;
+
+        console.error(`[API:${requestId}] ❌ OpenRouter input too large:`, {
+          totalMB,
+          perImageBytes,
+        });
+
+        return NextResponse.json<GenerateResponse>(
+          {
+            success: false,
+            error,
+          },
+          { status: 413 }
+        );
+      }
+    }
 
     if (provider === "gemini") {
       // Initialize Gemini client
@@ -363,6 +407,11 @@ export async function POST(request: NextRequest) {
           : null;
 
       const status = openRouterResponse.status;
+      const isCloudflareTemporary =
+        status === 503 &&
+        /Cloudflare|Temporarily unavailable|cf-error-code|Error\s*1105/i.test(
+          errorText
+        );
       const errorMessage =
         typeof nestedMessage === "string" && nestedMessage
           ? nestedMessage
@@ -378,6 +427,17 @@ export async function POST(request: NextRequest) {
             error: "Rate limit reached. Please wait and try again.",
           },
           { status: 429 }
+        );
+      }
+
+      if (isCloudflareTemporary) {
+        return NextResponse.json<GenerateResponse>(
+          {
+            success: false,
+            error:
+              "OpenRouter 暂时不可用（Cloudflare 1105）。如果你上传的是大图，建议先压缩/缩放后重试；否则请稍后再试。",
+          },
+          { status: 503 }
         );
       }
 

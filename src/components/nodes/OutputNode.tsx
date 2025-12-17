@@ -30,6 +30,13 @@ export function OutputNode({ id, data, selected }: NodeProps<OutputNodeType>) {
           position={Position.Left}
           id="image"
           data-handletype="image"
+          style={{
+            borderRadius: 0,
+            borderColor: '#898989',
+            borderWidth: '0.5px',
+            height: '10px',
+            width: '4px',
+          }}
         />
 
         {nodeData.image ? (

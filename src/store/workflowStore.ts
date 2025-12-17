@@ -22,8 +22,37 @@ import {
   ImageHistoryItem,
 } from "@/types";
 import { useToast } from "@/components/Toast";
+import {
+  estimateBase64BytesFromDataUrl,
+  optimizeImageDataUrl,
+} from "@/utils/imageOptimization";
 
 export type EdgeStyle = "angular" | "curved";
+
+const MAX_GENERATE_INPUT_IMAGE_BYTES = 6 * 1024 * 1024;
+const MAX_GENERATE_INPUT_IMAGE_DIMENSION = 2048;
+
+async function prepareImagesForGenerate(images: string[]): Promise<string[]> {
+  const prepared = await Promise.all(
+    images.map(async (image) => {
+      const approxBytes = estimateBase64BytesFromDataUrl(image);
+      if (approxBytes === null || approxBytes <= MAX_GENERATE_INPUT_IMAGE_BYTES) {
+        return image;
+      }
+
+      const optimized = await optimizeImageDataUrl(image, {
+        maxDimension: MAX_GENERATE_INPUT_IMAGE_DIMENSION,
+        maxBytes: MAX_GENERATE_INPUT_IMAGE_BYTES,
+        outputMimeType: "image/jpeg",
+        quality: 0.85,
+      });
+
+      return optimized.dataUrl;
+    })
+  );
+
+  return prepared;
+}
 
 // Workflow file format
 export interface WorkflowFile {
@@ -521,8 +550,23 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
             try {
               const nodeData = node.data as NanoBananaNodeData;
 
+              let preparedImages: string[];
+              try {
+                preparedImages = await prepareImagesForGenerate(images);
+              } catch (err) {
+                updateNodeData(node.id, {
+                  status: "error",
+                  error:
+                    err instanceof Error
+                      ? err.message
+                      : "Image processing failed",
+                });
+                set({ isRunning: false, currentNodeId: null });
+                return;
+              }
+
               const requestPayload = {
-                images,
+                images: preparedImages,
                 prompt: text,
                 aspectRatio: nodeData.aspectRatio,
                 resolution: nodeData.resolution,
@@ -736,11 +780,23 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
           error: null,
         });
 
+        let preparedImages: string[];
+        try {
+          preparedImages = await prepareImagesForGenerate(images);
+        } catch (err) {
+          updateNodeData(nodeId, {
+            status: "error",
+            error: err instanceof Error ? err.message : "Image processing failed",
+          });
+          set({ isRunning: false, currentNodeId: null });
+          return;
+        }
+
         const response = await fetch("/api/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            images,
+            images: preparedImages,
             prompt: text,
             aspectRatio: nodeData.aspectRatio,
             resolution: nodeData.resolution,

@@ -6,6 +6,7 @@ import { BaseNode } from "./BaseNode";
 import { useAnnotationStore } from "@/store/annotationStore";
 import { useWorkflowStore } from "@/store/workflowStore";
 import { AnnotationNodeData } from "@/types";
+import { optimizeImageFile } from "@/utils/imageOptimization";
 
 type AnnotationNodeType = Node<AnnotationNodeData, "annotation">;
 
@@ -16,7 +17,7 @@ export function AnnotationNode({ id, data, selected }: NodeProps<AnnotationNodeT
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
 
@@ -25,21 +26,31 @@ export function AnnotationNode({ id, data, selected }: NodeProps<AnnotationNodeT
         return;
       }
 
-      if (file.size > 10 * 1024 * 1024) {
-        alert("Image too large. Maximum size is 10MB.");
+      const maxRawBytes = 60 * 1024 * 1024;
+      if (file.size > maxRawBytes) {
+        alert("Image too large. Maximum size is 60MB.");
         return;
       }
 
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const base64 = event.target?.result as string;
+      try {
+        const optimized = await optimizeImageFile(file, {
+          maxDimension: 2048,
+          maxBytes: 6 * 1024 * 1024,
+          outputMimeType: "image/jpeg",
+          quality: 0.85,
+        });
+
         updateNodeData(id, {
-          sourceImage: base64,
+          sourceImage: optimized.dataUrl,
           outputImage: null,
           annotations: [],
         });
-      };
-      reader.readAsDataURL(file);
+      } catch (error) {
+        console.error("Failed to process image:", error);
+        alert("Failed to load image.");
+      } finally {
+        e.target.value = "";
+      }
     },
     [id, updateNodeData]
   );
@@ -101,12 +112,28 @@ export function AnnotationNode({ id, data, selected }: NodeProps<AnnotationNodeT
         position={Position.Left}
         id="image"
         data-handletype="image"
+
+        style={{
+          borderRadius: 0,
+          borderColor: '#898989',
+          borderWidth: '0.5px',
+          height: '10px',
+          width: '4px',
+        }}
       />
       <Handle
         type="source"
         position={Position.Right}
         id="image"
         data-handletype="image"
+
+        style={{
+          borderRadius: 0,
+          borderColor: '#898989',
+          borderWidth: '0.5px',
+          height: '10px',
+          width: '4px',
+        }}
       />
 
       {displayImage ? (

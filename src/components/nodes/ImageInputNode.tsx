@@ -5,6 +5,7 @@ import { Handle, Position, NodeProps, Node } from "@xyflow/react";
 import { BaseNode } from "./BaseNode";
 import { useWorkflowStore } from "@/store/workflowStore";
 import { ImageInputNodeData } from "@/types";
+import { optimizeImageFile } from "@/utils/imageOptimization";
 
 type ImageInputNodeType = Node<ImageInputNodeData, "imageInput">;
 
@@ -14,7 +15,7 @@ export function ImageInputNode({ id, data, selected }: NodeProps<ImageInputNodeT
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
 
@@ -23,25 +24,32 @@ export function ImageInputNode({ id, data, selected }: NodeProps<ImageInputNodeT
         return;
       }
 
-      if (file.size > 10 * 1024 * 1024) {
-        alert("Image too large. Maximum size is 10MB.");
+      const maxRawBytes = 60 * 1024 * 1024;
+      if (file.size > maxRawBytes) {
+        alert("Image too large. Maximum size is 60MB.");
         return;
       }
 
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const base64 = event.target?.result as string;
-        const img = new Image();
-        img.onload = () => {
-          updateNodeData(id, {
-            image: base64,
-            filename: file.name,
-            dimensions: { width: img.width, height: img.height },
-          });
-        };
-        img.src = base64;
-      };
-      reader.readAsDataURL(file);
+      try {
+        const optimized = await optimizeImageFile(file, {
+          maxDimension: 2048,
+          maxBytes: 6 * 1024 * 1024,
+          outputMimeType: "image/jpeg",
+          quality: 0.85,
+        });
+
+        updateNodeData(id, {
+          image: optimized.dataUrl,
+          filename: file.name,
+          dimensions: { width: optimized.width, height: optimized.height },
+        });
+      } catch (error) {
+        console.error("Failed to process image:", error);
+        alert("Failed to load image.");
+      } finally {
+        // Allow selecting the same file again
+        e.target.value = "";
+      }
     },
     [id, updateNodeData]
   );
@@ -134,6 +142,14 @@ export function ImageInputNode({ id, data, selected }: NodeProps<ImageInputNodeT
         position={Position.Right}
         id="image"
         data-handletype="image"
+
+        style={{
+          borderRadius: 0,
+          borderColor: '#898989',
+          borderWidth: '0.5px',
+          height: '10px',
+          width: '4px',
+        }}
       />
     </BaseNode>
   );

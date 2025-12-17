@@ -86,8 +86,15 @@ export function LLMGenerateNode({ id, data, selected }: NodeProps<LLMGenerateNod
         type="target"
         position={Position.Left}
         id="text"
-        style={{ top: "50%" }}
         data-handletype="text"
+        style={{
+          top: "50%",
+          borderRadius: 0,
+          borderColor: '#898989',
+          borderWidth: '0.5px',
+          height: '10px',
+          width: '4px',
+        }}
       />
       {/* Text output */}
       <Handle
@@ -95,6 +102,14 @@ export function LLMGenerateNode({ id, data, selected }: NodeProps<LLMGenerateNod
         position={Position.Right}
         id="text"
         data-handletype="text"
+
+        style={{
+          borderRadius: 0,
+          borderColor: '#898989',
+          borderWidth: '0.5px',
+          height: '10px',
+          width: '4px',
+        }}
       />
 
       <div className="flex-1 flex flex-col min-h-0 gap-2">

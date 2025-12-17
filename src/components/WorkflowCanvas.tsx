@@ -32,6 +32,7 @@ import { EdgeToolbar } from "./EdgeToolbar";
 import { GlobalImageHistory } from "./GlobalImageHistory";
 import { NodeType, NanoBananaNodeData } from "@/types";
 import { detectAndSplitGrid } from "@/utils/gridSplitter";
+import { optimizeImageBlob, optimizeImageFile } from "@/utils/imageOptimization";
 
 const nodeTypes: NodeTypes = {
   imageInput: ImageInputNode,
@@ -499,33 +500,43 @@ function WorkflowCanvasInner() {
         navigator.clipboard.read().then(async (items) => {
           for (const item of items) {
             // Check for image
-            const imageType = item.types.find(type => type.startsWith('image/'));
+            const imageType = item.types.find((type) => type.startsWith("image/"));
             if (imageType) {
               const blob = await item.getType(imageType);
-              const reader = new FileReader();
-              reader.onload = (e) => {
-                const dataUrl = e.target?.result as string;
-                const { centerX, centerY } = getViewportCenter();
+              try {
+                const optimized = await optimizeImageBlob(blob, {
+                  maxDimension: 2048,
+                  maxBytes: 6 * 1024 * 1024,
+                  outputMimeType: "image/jpeg",
+                  quality: 0.85,
+                });
 
-                const img = new Image();
-                img.onload = () => {
-                  // ImageInput node default dimensions: 300x280
-                  const nodeId = addNode("imageInput", { x: centerX - 150, y: centerY - 140 });
-                  updateNodeData(nodeId, {
-                    image: dataUrl,
-                    filename: `pasted-${Date.now()}.png`,
-                    dimensions: { width: img.width, height: img.height },
-                  });
-                };
-                img.src = dataUrl;
-              };
-              reader.readAsDataURL(blob);
+                const { centerX, centerY } = getViewportCenter();
+                const nodeId = addNode("imageInput", {
+                  x: centerX - 150,
+                  y: centerY - 140,
+                });
+
+                const extension =
+                  optimized.mimeType === "image/png" ? "png"
+                    : optimized.mimeType === "image/webp" ? "webp"
+                      : "jpg";
+
+                updateNodeData(nodeId, {
+                  image: optimized.dataUrl,
+                  filename: `pasted-${Date.now()}.${extension}`,
+                  dimensions: { width: optimized.width, height: optimized.height },
+                });
+              } catch (err) {
+                console.error("Failed to paste image:", err);
+                alert("Failed to paste image.");
+              }
               return; // Exit after handling image
             }
 
             // Check for text
-            if (item.types.includes('text/plain')) {
-              const blob = await item.getType('text/plain');
+            if (item.types.includes("text/plain")) {
+              const blob = await item.getType("text/plain");
               const text = await blob.text();
               if (text.trim()) {
                 const { centerX, centerY } = getViewportCenter();
@@ -764,29 +775,42 @@ function WorkflowCanvasInner() {
 
       // Create a node for each dropped image
       imageFiles.forEach((file, index) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const dataUrl = e.target?.result as string;
+        void (async () => {
+          // Keep consistent with ImageInputNode supported types
+          if (!file.type.match(/^image\/(png|jpeg|webp)$/)) {
+            alert("Unsupported format. Use PNG, JPG, or WebP.");
+            return;
+          }
 
-          // Create image to get dimensions
-          const img = new Image();
-          img.onload = () => {
-            // Add the node at the drop position (offset for multiple files)
+          const maxRawBytes = 60 * 1024 * 1024;
+          if (file.size > maxRawBytes) {
+            alert("Image too large. Maximum size is 60MB.");
+            return;
+          }
+
+          try {
+            const optimized = await optimizeImageFile(file, {
+              maxDimension: 2048,
+              maxBytes: 6 * 1024 * 1024,
+              outputMimeType: "image/jpeg",
+              quality: 0.85,
+            });
+
             const nodeId = addNode("imageInput", {
               x: position.x + index * 240,
               y: position.y,
             });
 
-            // Update the node with the image data
             updateNodeData(nodeId, {
-              image: dataUrl,
+              image: optimized.dataUrl,
               filename: file.name,
-              dimensions: { width: img.width, height: img.height },
+              dimensions: { width: optimized.width, height: optimized.height },
             });
-          };
-          img.src = dataUrl;
-        };
-        reader.readAsDataURL(file);
+          } catch (err) {
+            console.error("Failed to drop image:", err);
+            alert("Failed to load image.");
+          }
+        })();
       });
     },
     [screenToFlowPosition, addNode, updateNodeData, loadWorkflow]

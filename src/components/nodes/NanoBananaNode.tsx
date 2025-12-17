@@ -76,17 +76,32 @@ export function NanoBananaNode({ id, data, selected }: NodeProps<NanoBananaNodeT
         type="target"
         position={Position.Left}
         id="image"
-        style={{ top: "35%" }}
         data-handletype="image"
         isConnectable={true}
+        style={{
+          top: "35%",
+          borderRadius: 0,
+          borderColor: '#898989',
+          borderWidth: '0.5px',
+          height: '10px',
+          width: '4px',
+        }}
       />
       {/* Text input - single connection */}
       <Handle
         type="target"
         position={Position.Left}
         id="text"
-        style={{ top: "65%" }}
         data-handletype="text"
+
+        style={{
+          top: "65%",
+          borderRadius: 0,
+          borderColor: '#898989',
+          borderWidth: '0.5px',
+          height: '10px',
+          width: '4px',
+        }}
       />
       {/* Image output */}
       <Handle
@@ -94,7 +109,41 @@ export function NanoBananaNode({ id, data, selected }: NodeProps<NanoBananaNodeT
         position={Position.Right}
         id="image"
         data-handletype="image"
+
+        style={{
+          borderRadius: 0,
+          borderColor: '#898989',
+          borderWidth: '0.5px',
+          height: '10px',
+          width: '4px',
+        }}
       />
+
+      <div className="absolute right-[12px] top-[12px]">
+        <button
+          onClick={handleRegenerate}
+          disabled={isRunning}
+          className="w-5 h-5 bg-neutral-900/80 hover:bg-blue-600/80 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-neutral-400 hover:text-white transition-colors"
+          title="Regenerate"
+        >
+          {
+            nodeData.outputImage 
+            ? <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg> 
+            : <svg
+              className="w-3 h-3"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          }
+          {/* <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg> */}
+        </button>
+      </div>
 
       <div className="flex-1 flex flex-col min-h-0 gap-2">
         {/* Preview area */}
@@ -130,7 +179,7 @@ export function NanoBananaNode({ id, data, selected }: NodeProps<NanoBananaNodeT
               </div>
             )}
             <div className="absolute top-1 right-1 flex gap-1">
-              <button
+              {/* <button
                 onClick={handleRegenerate}
                 disabled={isRunning}
                 className="w-5 h-5 bg-neutral-900/80 hover:bg-blue-600/80 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-neutral-400 hover:text-white transition-colors"
@@ -139,7 +188,7 @@ export function NanoBananaNode({ id, data, selected }: NodeProps<NanoBananaNodeT
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
-              </button>
+              </button> */}
               <button
                 onClick={handleClearImage}
                 className="w-5 h-5 bg-neutral-900/80 hover:bg-red-600/80 flex items-center justify-center text-neutral-400 hover:text-white transition-colors"
@@ -178,9 +227,20 @@ export function NanoBananaNode({ id, data, selected }: NodeProps<NanoBananaNodeT
                 {nodeData.error || "Failed"}
               </span>
             ) : (
-              <span className="text-neutral-500 text-[10px]">
+              <button
+                type="button"
+                onClick={handleRegenerate}
+                disabled={isRunning}
+                className="
+                  text-neutral-500 text-[10px]
+                  hover:text-neutral-200
+                  disabled:opacity-50 disabled:cursor-not-allowed
+                  transition-colors
+                "
+                title="Run to generate"
+              >
                 Run to generate
-              </span>
+              </button>
             )}
           </div>
         )}

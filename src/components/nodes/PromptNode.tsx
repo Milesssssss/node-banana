@@ -33,6 +33,14 @@ export function PromptNode({ id, data, selected }: NodeProps<PromptNodeType>) {
         position={Position.Right}
         id="text"
         data-handletype="text"
+
+        style={{
+          borderRadius: 0,
+          borderColor: '#898989',
+          borderWidth: '0.5px',
+          height: '10px',
+          width: '4px',
+        }}
       />
     </BaseNode>
   );
